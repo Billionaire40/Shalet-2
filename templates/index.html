@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Company Task Tracker</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background-color: #f9f9f9; }
+        h1 { color: #333; }
+        .task { background: #fff; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .done { text-decoration: line-through; color: gray; }
+    </style>
+</head>
+<body>
+    <h1>Company Task Tracker</h1>
+    <div style="padding: 10px; background: #eef; margin-bottom: 15px; border-radius: 5px;">
+        <strong>📊 Dashboard:</strong><br>
+        🟢 Open Tasks: {{ open_tasks }}<br>
+        ✅ Completed Tasks: {{ completed_tasks }}
+    </div>
+
+    <form action="/add" method="post">
+        <input type="text" name="task" placeholder="Task description" required>
+        <input type="text" name="assigned_to" placeholder="Assigned to" required>
+        <select name="priority" required>
+            <option value="high">🔴 High</option>
+            <option value="medium">🟡 Medium</option>
+            <option value="low">🟢 Low</option>
+        </select>
+        <input type="date" name="due_date" required>
+        <button type="submit">Add Task</button>
+    </form>
+
+    <h2>Task List</h2>
+    {% for task in tasks %}
+        <div class="task {% if task.done %}done{% endif %}">
+            {{ loop.index }}. {{ task.task }}
+            <span style="font-weight:bold;">
+                {% if task.priority == 'high' %}
+                    🔴
+                {% elif task.priority == 'medium' %}
+                    🟡
+                {% else %}
+                    🟢
+                {% endif %}
+            </span>
+            (Assigned to: {{ task.assigned_to }})<br>
+            Due: {{ task.due_date }}<br>
+
+            {% if not task.done %}
+                <a href="/complete/{{ loop.index0 }}">✅ Complete</a> |
+            {% endif %}
+            <a href="/delete/{{ loop.index0 }}" style="color:red;">🗑 Delete</a>
+        </div>
+    {% endfor %}
+</body>
+</html>
